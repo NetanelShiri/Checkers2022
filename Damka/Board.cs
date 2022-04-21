@@ -38,29 +38,47 @@ namespace Damka
             get { return m_BoardSize; }
         }
 
-        
-            
-       
-        //8-2 = 6 / 2 = 3
-        //8/2 = 4           
         public void printBoard()
         {
+            StringBuilder sb = new StringBuilder();
+            string seperator1 = "     ";
+            string seperator2 = " ";
+            string seperator3 = " | ";
+            char upper_letter = 'A';
+            char lower_letter = 'a';
+            string betweenRows = "===";
+            betweenRows += String.Concat(Enumerable.Repeat("=", (BoardSize) * 6));
+
+            for (int i = 0; i < BoardSize; i++)
+            {
+                sb.Append(seperator1 + upper_letter);
+                upper_letter++;
+            }
+            sb.Append(Environment.NewLine);
+            sb.Append(betweenRows);
+            sb.Append(Environment.NewLine);
+
             for (int i = 0; i < m_BoardSize; i++)
             {
+                sb.Append(lower_letter + seperator3 + seperator2);
                 for (int j = 0; j < m_BoardSize; j++)
                 {
                     if (board[i, j] != ' ')
                     {
-                        Console.Write(board[i, j]);
+                        sb.Append(board[i, j]);
                     }
                     else
                     {
-                        Console.Write(" ");
+                        sb.Append(seperator2);
                     }
+                    sb.Append(" " + seperator3 + " ");
                 }
-                Console.Write(Environment.NewLine);
-            }
+                sb.Append(Environment.NewLine + betweenRows + Environment.NewLine);
 
+                lower_letter++;
+            }
+            sb.Append(Environment.NewLine);
+            Console.Write(sb);
         }
 
         private void initializeBoard()

@@ -21,6 +21,8 @@ namespace Damka
             m_Name = m_name;
             m_PlayerNumber = m_playerNumber;
             m_Score = 0;
+            i_PlayerSign = m_playerNumber == 1 ? 
+                Properties.eView.Player1: Properties.eView.Player2;
             m_Soldiers = new Dictionary<string, Soldier>();
         }
 
@@ -30,6 +32,11 @@ namespace Damka
             set { i_PlayerSign = value; }
         }
 
+        public string Name
+        {
+            get { return m_Name; }
+            set { m_Name = value; }
+        }
         public byte PlayerNumber
         {
             get { return m_PlayerNumber; }
@@ -62,9 +69,8 @@ namespace Damka
         public void createSoldiers(int i_BoardSize)
         {
             int startLoop, endLoop;
-            char row, col;
             string res;
-           // Point p;
+            Point p;
             startLoop = this.m_PlayerNumber == (int)Properties.ePlayerNumber.Player1 ? i_BoardSize-1 : (i_BoardSize / 2) -2;
             endLoop = this.m_PlayerNumber == (int)Properties.ePlayerNumber.Player1 ? (i_BoardSize / 2) + 1 : 0;
 
@@ -74,10 +80,8 @@ namespace Damka
                 {
                     if ((i + j) % 2 != 0)
                     {
-                        row = (char)(i + 'a');
-                        col = (char)(j + 'A');
-                       // p = new Point(i, j);
-                        res = row.ToString() + col.ToString();
+                        p = new Point(i, j);
+                       res =  p.convertPointToString(p);
                         m_Soldiers.Add(res, new Soldier(res, i_PlayerSign));
                     }
                   

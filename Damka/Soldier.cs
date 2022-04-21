@@ -24,6 +24,7 @@ namespace Damka
         public string location
         {
             get { return m_location; }
+            set { m_location = value; }
         }
 
         public Properties.eView soldierSign

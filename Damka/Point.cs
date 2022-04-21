@@ -11,8 +11,46 @@ namespace Damka
         public static readonly Point Empty;
 
         private int x;
-
         private int y;
+        private string pointAsString;
+
+        public Point(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+            pointAsString = convertIntToString(x, y);
+        }
+
+
+
+        public Point() { }
+
+        public Point convertStringToPoint(string input)
+        {
+            Point newPoint;
+            int x, y;
+            x = input[0] - 'a';
+            y = input[1] - 'A';
+            newPoint = new Point(x, y);
+            return newPoint;
+        }
+
+        public string convertPointToString(Point point)
+        {
+            char row, col;
+            row = (char)(point.x + 'a');
+            col = (char)(point.y + 'A');
+            return row.ToString() + col.ToString();
+        }
+
+        public string convertIntToString(int x,int y)
+        {
+            char row, col;
+            row = (char)(x + 'a');
+            col = (char)(y + 'A');
+            return row.ToString() + col.ToString();
+        }
+
 
         public bool IsEmpty
         {
@@ -53,15 +91,7 @@ namespace Damka
             }
         }
 
-      
-        public Point(int x, int y)
-        {
-            this.x = x;
-            this.y = y;
-        }
 
-        public Point() { }
-       
        
     }
 }
