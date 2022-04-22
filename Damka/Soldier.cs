@@ -27,6 +27,12 @@ namespace Damka
             set { m_location = value; }
         }
 
+        public byte level
+        {
+            get { return m_level; }
+            set { m_level = value; }
+        }
+
         public Properties.eView soldierSign
         {
             get

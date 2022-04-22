@@ -9,31 +9,53 @@ namespace Damka
     internal class GamePlay
     {
 
-        private Menu menu;
+        private Menu m_menu;
         private Board m_Board;
-        private List<Player> m_Players = new List<Player>();
-       
+        private Player m_currPlayer;
+        private List<Player> m_Players;
+    
+
+        public GamePlay()
+        {
+            m_menu = new Menu();
+            m_Players = new List<Player>();
+        }
+
         public void run()
         {
-            string input, left, right;
-            Player currPlayer;
-            menu = new Menu();
-            menu.initiate(ref m_Board,ref m_Players);
-            
-            currPlayer = m_Players[0];
+     
+            m_menu.initiate(ref m_Board,ref m_Players);
+            m_currPlayer = m_Players[0];    
+
+
             while (true)
             {
                 Ex02.ConsoleUtils.Screen.Clear();
-                m_Board.printBoard();
-                input = menu.getInputFromPlayer(currPlayer, m_Board);
-                currPlayer.Move.setMovement(m_Board,m_Players,currPlayer);
-                currPlayer = currPlayer.PlayerNumber == 1 ? m_Players[1] : m_Players[0];
 
-                System.Threading.Thread.Sleep(850);
-             
-              
+                m_Board.printBoard();
+                m_menu.getInputFromPlayer(m_currPlayer, m_Board);
+                m_currPlayer.Move.setMovement(m_Board, m_Players, m_currPlayer);
+                getNextTurn();
+
+                System.Threading.Thread.Sleep(850); 
             }
          
+        }
+
+        public void getNextTurn()
+        {
+            int playersAmount = m_Players.Count;
+            int playerNumber = m_currPlayer.PlayerNumber;
+
+            if(playersAmount == playerNumber)
+            {
+                m_currPlayer = m_Players[0];
+            }
+            else
+            {
+                m_currPlayer = m_Players[playerNumber];
+            }
+            
         }
     }
 }

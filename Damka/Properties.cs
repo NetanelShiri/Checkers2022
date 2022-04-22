@@ -8,6 +8,7 @@ namespace Damka
 {
     internal class Properties
     {
+       
         public enum eView
         {
             Player1 ='X',

@@ -56,7 +56,7 @@ namespace Damka
             }
         }
 
-        public string getInputFromPlayer(Player currPlayer , Board board)
+        public void getInputFromPlayer(Player currPlayer , Board board)
         {
             string input = "";
             bool isValid = false;
@@ -78,7 +78,7 @@ namespace Damka
                 }
                 
             }
-            return input;
+
         }
 
         public bool isValidInput(string input)

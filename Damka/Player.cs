@@ -13,6 +13,7 @@ namespace Damka
         private int m_Score;
         private byte m_PlayerNumber;
         private Properties.eView i_PlayerSign;
+        private Properties.eView i_PlayerSignKing;
         private Movement m_movement;
         private Dictionary<string, Soldier> m_Soldiers;
         
@@ -21,8 +22,16 @@ namespace Damka
             m_Name = m_name;
             m_PlayerNumber = m_playerNumber;
             m_Score = 0;
-            i_PlayerSign = m_playerNumber == 1 ? 
-                Properties.eView.Player1: Properties.eView.Player2;
+            if (m_playerNumber == 1)
+            {
+                i_PlayerSign = Properties.eView.Player1;
+                i_PlayerSignKing = Properties.eView.Player1_King;
+            }
+            else
+            {
+                i_PlayerSign = Properties.eView.Player2;
+                i_PlayerSignKing = Properties.eView.Player2_King;
+            }
             m_Soldiers = new Dictionary<string, Soldier>();
         }
 
@@ -30,6 +39,12 @@ namespace Damka
         {
             get { return i_PlayerSign; }
             set { i_PlayerSign = value; }
+        }
+
+        public Properties.eView PlayerSignKing
+        {
+            get { return i_PlayerSignKing; }
+            set { i_PlayerSignKing = value; }
         }
 
         public string Name
