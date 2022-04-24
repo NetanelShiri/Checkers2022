@@ -97,11 +97,24 @@ namespace Damka
                     {
                         p = new Point(i, j);
                        res =  p.convertPointToString(p);
-                        m_Soldiers.Add(res, new Soldier(res, i_PlayerSign));
+                        m_Soldiers.Add(res, new Soldier(res, i_PlayerSign,false));
                     }
                   
                 }
             }
+
+        }
+
+        public bool checkIfKing(string i_to , int boardSize)
+        {
+            bool isKing = false;
+            int x = i_to[0] - 'a';
+            if (this.PlayerNumber == 1 && x == 0 || this.PlayerNumber == 2 && x == boardSize - 1)
+            {
+                isKing = true;
+            }
+ 
+            return isKing;
 
         }
     }

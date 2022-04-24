@@ -25,7 +25,7 @@ namespace Damka
         {
      
             m_menu.initiate(ref m_Board,ref m_Players);
-            m_currPlayer = m_Players[0];    
+            m_currPlayer = m_Players[0];
 
 
             while (true)
@@ -35,7 +35,9 @@ namespace Damka
                 m_Board.printBoard();
                 m_menu.getInputFromPlayer(m_currPlayer, m_Board);
                 m_currPlayer.Move.setMovement(m_Board, m_Players, m_currPlayer);
-                getNextTurn();
+                if (!m_currPlayer.Move.MustEatAgain) {
+                    getNextTurn();
+                }
 
                 System.Threading.Thread.Sleep(850); 
             }
@@ -46,8 +48,9 @@ namespace Damka
         {
             int playersAmount = m_Players.Count;
             int playerNumber = m_currPlayer.PlayerNumber;
+            
 
-            if(playersAmount == playerNumber)
+            if (playersAmount == playerNumber)
             {
                 m_currPlayer = m_Players[0];
             }

@@ -14,6 +14,7 @@ namespace Damka
         private string m_FromAsString, m_ToAsString; 
         private bool m_isEatingMove = false;
         private bool m_MustEat = false;
+        private bool m_MustEatAgain = false;
 
         public Movement(string from,string to)
         {
@@ -30,6 +31,11 @@ namespace Damka
             get { return m_isEatingMove; }    
             set { m_isEatingMove = value; }
 
+        }
+        public bool MustEatAgain
+        {
+            get { return m_MustEatAgain; }
+            set { m_MustEatAgain = value; }
         }
 
 
@@ -66,6 +72,8 @@ namespace Damka
             char curr;
             int currPlayerNumber = i_Player.PlayerNumber;
             int row1=0, col1=0;
+            int upOrDown;
+            bool isKing = false;    
             row = m_From.X - m_To.X;
             col = m_From.Y - m_To.Y;
             Point point;
@@ -74,77 +82,103 @@ namespace Damka
 
                 if (i_Board[m_To.X, m_To.Y] == (char)Properties.eView.None)
                 {
-                    if (Math.Abs(m_To.Y - m_From.Y) == 1)
+                    isKing = i_Player.Soldiers[m_FromAsString].level > 1;
+                    upOrDown = m_To.X - m_From.X;
+
+                    if (Math.Abs(upOrDown) == 1)
                     {
 
 
-                        if (row == 1 && currPlayerNumber == 1 || row == -1 && currPlayerNumber == 2)
+
+                        if (row == 1 && currPlayerNumber == 1 || row == -1 && currPlayerNumber == 2
+                            || (Math.Abs(row) == 1 && isKing))
                         {
-                            isLegal = true;
+                            if (Math.Abs(col) == 1)
+                            {
+                                isLegal = true;
+                            }
 
                         }
                         else
                             Console.WriteLine("nooooooooooooooo");
                     }
-                    else if (Math.Abs(m_To.Y - m_From.Y) == 2)
+                    else if (Math.Abs(upOrDown) == 2 && Math.Abs(col) == 2)
                     {
                         Console.WriteLine("TRYING TO EAT");
-                        row1 = currPlayerNumber == 1 ? (m_From.X-1) :(m_From.X+1);
 
-                        if(row == 2 && col == 2)
+
+                        if (upOrDown > 0)
                         {
-                            col1 = m_From.Y-1; 
+                            row1 = m_From.X + 1;
                         }
-                        else if(row == 2 && col == -2)
+                        else
                         {
-                            col1 = m_From.Y+1;  
+                            row1 = m_From.X - 1;
                         }
-                        else if(row == -2 && col == 2)
+
+                        if (row == 2 && col == 2)
                         {
-                            col1 = m_From.Y-1;
+                            col1 = m_From.Y - 1;
+                        }
+                        else if (row == 2 && col == -2)
+                        {
+                            col1 = m_From.Y + 1;
+                        }
+                        else if (row == -2 && col == 2)
+                        {
+                            col1 = m_From.Y - 1;
                         }
                         else if (row == -2 && col == -2)
                         {
                             col1 = m_From.Y + 1;
-
                         }
+
                         curr = i_Board[row1, col1];
                         point = new Point(row1, col1);
+
                         if (currPlayerNumber == 1
                             && curr == (char)Properties.eView.Player2
                             || curr == (char)Properties.eView.Player2_King)
                         {
                             isLegal = true;
+                            if (upOrDown > 0 && !isKing)
+                            {
+                                isLegal = false;
+                            }
 
+                            IsEatingMove = true;
+                            m_Eaten = point;
                         }
                         else if (currPlayerNumber == 2
                             && curr == (char)Properties.eView.Player1
                             || curr == (char)Properties.eView.Player1_King)
                         {
                             isLegal = true;
-
+                            if (upOrDown < 0 && !isKing)
+                            {
+                                isLegal = false;
+                            }
+                            IsEatingMove = true;
+                            m_Eaten = point;
                         }
                         else
                         {
                             IsEatingMove = false;
                         }
 
-                        IsEatingMove = true;
-                        m_Eaten = point;
 
                     }
 
-                    if (!IsEatingMove)
+                    if (!IsEatingMove && isLegal)
                     {
                         canPlayerEat(i_Player, i_Board);
-                        if(m_MustEat) { isLegal = false; }
+                        if (m_MustEat) { isLegal = false; }
                     }
                 }
                 else
+                {
                     Console.WriteLine("nooooooooooooooo YAAAAAAAAAAAAAAAAAAA");
-
-
-
+                }
 
 
 
@@ -158,11 +192,29 @@ namespace Damka
 
         public void setMovement(Board board,List<Player> players,Player player)
         {
+            bool isKing = false;
+            byte soldierLevel;
+            Properties.eView currSign;
+            Soldier currSoldier = player.Soldiers[m_FromAsString];
+            soldierLevel = currSoldier.level;
+            currSign = currSoldier.soldierSign;
+
             player.Soldiers.Remove(m_FromAsString);
-            player.Soldiers.Add(m_ToAsString,new Soldier(m_ToAsString, player.PlayerSign));
-            
+            if (soldierLevel <= 1)
+            {
+                isKing = player.checkIfKing(m_ToAsString,board.BoardSize);
+                if (isKing) { currSign = player.PlayerSignKing; }
+            }
+            else
+            {
+                isKing = true;
+            }
+         
+
+            player.Soldiers.Add(m_ToAsString, new Soldier(m_ToAsString, currSign, isKing));
+
             board[From.X,From.Y] = (char)Properties.eView.None;
-            board[To.X,To.Y] = (char)player.PlayerSign;
+            board[To.X,To.Y] = (char)currSign;
 
             if (IsEatingMove)
             {
@@ -173,19 +225,22 @@ namespace Damka
                         board[m_Eaten.X, m_Eaten.Y] = (char)Properties.eView.None;
                     }
                 }
+                canPlayerEat(player, board);
+                m_MustEatAgain = m_MustEat;
             }
+
 
         }
 
         public void canPlayerEat(Player player,Board board)
         {
             Dictionary<string, Soldier> playerSoldiers = player.Soldiers;
-           // Dictionary<string, Soldier> potentialEaters = new Dictionary<string,Soldier>();
             Point point = new Point();
             Point diagonal1 = new Point() , diagonal2 = new Point();
             int upOrDown = player.PlayerNumber == 1 ? -1 : 1;
             int sideMove = 1;
             bool isKing;
+            m_MustEat = false;
 
         
 
@@ -249,7 +304,7 @@ namespace Damka
         }
         public bool isPointInBorder(Point p,int boardSize) {
                
-            return (p.X < boardSize && p.Y < boardSize && p.X > 0 && p.Y > 0);
+            return (p.X < boardSize && p.Y < boardSize && p.X >= 0 && p.Y >= 0);
         }
     }
 }

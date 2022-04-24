@@ -15,10 +15,11 @@ namespace Damka
         private byte m_level = 1;
         private Properties.eView i_soldierSign;
 
-        public Soldier(string location, Properties.eView sign )
+        public Soldier(string location, Properties.eView sign,bool isKing)
         {
             this.m_location = location;
             this.i_soldierSign = sign;
+            m_level = isKing ? (byte)2 : (byte)1;
         }
         
         public string location
